@@ -36,12 +36,12 @@ const eventModel = {
         return await query.get(sql, [id]);
     },
 
-    create: async ({ title, description, date, time, location, category, capacity, speaker, organizer, image_url }) => {
+    create: async ({ title, description, date, time, location, category, capacity, speaker, organizer, image_url, status = 'upcoming', postponed_note = '' }) => {
         const cap = parseInt(capacity, 10) || 50;
         const available = cap;
         const result = await query.run(
-            `INSERT INTO events (title, description, date, time, location, category, capacity, available_seats, speaker, organizer, image_url)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO events (title, description, date, time, location, category, capacity, available_seats, speaker, organizer, image_url, status, postponed_note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 title,
                 description,
@@ -53,7 +53,9 @@ const eventModel = {
                 available,
                 speaker || 'University Guest',
                 organizer || 'Campus Event Committee',
-                image_url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80'
+                image_url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80',
+                status,
+                postponed_note
             ]
         );
         return await eventModel.getById(result.lastID);
@@ -73,15 +75,16 @@ const eventModel = {
             capacity: fields.capacity !== undefined ? parseInt(fields.capacity, 10) : existing.capacity,
             speaker: fields.speaker !== undefined ? fields.speaker : existing.speaker,
             organizer: fields.organizer !== undefined ? fields.organizer : existing.organizer,
-            image_url: fields.image_url !== undefined ? fields.image_url : existing.image_url
+            image_url: fields.image_url !== undefined ? fields.image_url : existing.image_url,
+            status: fields.status !== undefined ? fields.status : (existing.status || 'upcoming'),
+            postponed_note: fields.postponed_note !== undefined ? fields.postponed_note : (existing.postponed_note || '')
         };
 
-        // Recalculate available seats based on new capacity minus current confirmed count
         const available_seats = Math.max(0, updated.capacity - existing.registered_count);
 
         await query.run(
             `UPDATE events 
-             SET title = ?, description = ?, date = ?, time = ?, location = ?, category = ?, capacity = ?, available_seats = ?, speaker = ?, organizer = ?, image_url = ?
+             SET title = ?, description = ?, date = ?, time = ?, location = ?, category = ?, capacity = ?, available_seats = ?, speaker = ?, organizer = ?, image_url = ?, status = ?, postponed_note = ?
              WHERE id = ?`,
             [
                 updated.title,
@@ -95,8 +98,24 @@ const eventModel = {
                 updated.speaker,
                 updated.organizer,
                 updated.image_url,
+                updated.status,
+                updated.postponed_note,
                 id
             ]
+        );
+
+        return await eventModel.getById(id);
+    },
+
+    postpone: async (id, newDate, newTime, note) => {
+        const existing = await eventModel.getById(id);
+        if (!existing) return null;
+
+        await query.run(
+            `UPDATE events 
+             SET date = ?, time = COALESCE(?, time), status = 'postponed', postponed_note = ?
+             WHERE id = ?`,
+            [newDate, newTime, note || `Postponed to ${newDate}`, id]
         );
 
         return await eventModel.getById(id);

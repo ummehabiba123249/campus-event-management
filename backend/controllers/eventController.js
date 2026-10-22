@@ -44,9 +44,8 @@ const eventController = {
 
     createEvent: async (req, res) => {
         try {
-            const { title, description, date, time, location, category, capacity, speaker, organizer, image_url } = req.body;
+            const { title, description, date, time, location, category, capacity, speaker, organizer, image_url, status, postponed_note } = req.body;
 
-            // Form validation
             if (!title || !description || !date || !time || !location || !category) {
                 return res.status(400).json({
                     success: false,
@@ -64,7 +63,9 @@ const eventController = {
                 capacity: capacity ? parseInt(capacity, 10) : 50,
                 speaker,
                 organizer,
-                image_url
+                image_url,
+                status: status || 'upcoming',
+                postponed_note: postponed_note || ''
             });
 
             return res.status(201).json({
@@ -101,6 +102,40 @@ const eventController = {
             return res.status(500).json({
                 success: false,
                 message: 'Internal server error while updating event.'
+            });
+        }
+    },
+
+    postponeEvent: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { new_date, new_time, note } = req.body;
+
+            if (!new_date) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'New event date is required to postpone.'
+                });
+            }
+
+            const updated = await eventModel.postpone(id, new_date, new_time, note);
+            if (!updated) {
+                return res.status(404).json({
+                    success: false,
+                    message: `Event with ID ${id} not found.`
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: `Event #${id} has been postponed successfully to ${new_date}.`,
+                event: updated
+            });
+        } catch (err) {
+            console.error('Error postponing event:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Internal server error while postponing event.'
             });
         }
     },

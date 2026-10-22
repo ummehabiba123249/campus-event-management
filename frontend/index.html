@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Event Management System | The University of Lahore</title>
-    <!-- Fonts & Icons -->
+    <title>Campus EventHub | The University of Lahore</title>
+    <!-- Favicon & Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -20,14 +20,30 @@
         <!-- 1. Hero Section (Home View) -->
         <section id="homeSection" class="hero">
             <div class="container hero-content">
-                <span class="hero-subtitle">The University of Lahore • Official Portal</span>
-                <h1 class="hero-title">Campus Event Management System</h1>
+                <div class="hero-live-badge">
+                    <span class="pulse-dot"></span>
+                    <span>The University of Lahore • Fall 2026 Live Portal</span>
+                </div>
+                
+                <h1 class="hero-title">
+                    Discover, Attend &amp; Lead <br>
+                    <span class="gradient-text">Campus Events</span>
+                </h1>
+                
                 <p class="hero-desc">
-                    Explore university seminars, technical workshops, sports galas, hackathons, and student society activities. Register in one click and stay connected with campus life.
+                    Your official university gateway to executive seminars, hands-on coding hackathons, national sports galas, and student society summits. Register in one click with instant pass confirmation.
                 </p>
-                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                    <button class="btn btn-accent" onclick="navigateTo('events')">Browse All Events ➔</button>
-                    <button class="btn btn-secondary" onclick="openLoginModal()">Student / Admin Sign In</button>
+
+                <div class="hero-actions">
+                    <button class="btn btn-primary" onclick="navigateTo('events')">
+                        🚀 Explore All Events
+                    </button>
+                    <button class="btn btn-secondary" onclick="openLoginModal()">
+                        🔑 Sign In / Account
+                    </button>
+                    <button class="btn btn-accent" onclick="quickDemoLogin('admin')">
+                        🛡️ 1-Click Admin Access
+                    </button>
                 </div>
             </div>
         </section>
@@ -36,31 +52,31 @@
         <div class="container">
             <div class="stats-strip">
                 <div class="stat-card">
-                    <div class="stat-icon">📅</div>
+                    <div class="stat-icon green">📅</div>
                     <div>
                         <div class="stat-value" id="statTotalEvents">6</div>
-                        <div class="stat-label">Campus Events</div>
+                        <div class="stat-label">Scheduled Events</div>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🎓</div>
+                    <div class="stat-icon blue">🎓</div>
                     <div>
                         <div class="stat-value" id="statTotalStudents">5</div>
-                        <div class="stat-label">Active Students</div>
+                        <div class="stat-label">Registered Students</div>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🎟️</div>
+                    <div class="stat-icon amber">🎟️</div>
                     <div>
                         <div class="stat-value" id="statTotalRegistrations">8</div>
-                        <div class="stat-label">Event Registrations</div>
+                        <div class="stat-label">Confirmed Bookings</div>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🏛️</div>
+                    <div class="stat-icon purple">🏛️</div>
                     <div>
                         <div class="stat-value">6+</div>
-                        <div class="stat-label">Societies & Depts</div>
+                        <div class="stat-label">Societies &amp; Faculties</div>
                     </div>
                 </div>
             </div>
@@ -73,42 +89,44 @@
                 <div class="filter-row-top">
                     <div class="search-box">
                         <span class="search-icon">🔍</span>
-                        <input type="text" id="eventSearchInput" class="search-input" placeholder="Search events by title, keyword, or venue...">
+                        <input type="text" id="eventSearchInput" class="search-input" placeholder="Search events by title, topic, speaker, or location...">
                     </div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-                        <span id="eventsCount" style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">
+                    <div>
+                        <span id="eventsCount" style="font-size: 0.88rem; font-weight: 700; color: var(--slate-600);">
                             Showing all events
                         </span>
                     </div>
                 </div>
 
                 <div class="category-pills">
-                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-right: 0.25rem;">Filter by:</span>
-                    <button class="category-pill active" data-category="All">All Events</button>
-                    <button class="category-pill" data-category="Workshop">Workshops</button>
-                    <button class="category-pill" data-category="Seminar">Seminars</button>
-                    <button class="category-pill" data-category="Sports">Sports</button>
-                    <button class="category-pill" data-category="Competition">Competitions</button>
-                    <button class="category-pill" data-category="Conference">Conferences</button>
-                    <button class="category-pill" data-category="Society Activities">Societies</button>
+                    <span class="category-label">Filter:</span>
+                    <button class="category-pill active" data-category="All">All Categories</button>
+                    <button class="category-pill" data-category="Workshop">💻 Workshops</button>
+                    <button class="category-pill" data-category="Seminar">🎤 Seminars</button>
+                    <button class="category-pill" data-category="Sports">🏆 Sports</button>
+                    <button class="category-pill" data-category="Competition">⚡ Competitions</button>
+                    <button class="category-pill" data-category="Conference">🌐 Conferences</button>
+                    <button class="category-pill" data-category="Society Activities">🏛️ Societies</button>
                 </div>
             </div>
 
             <!-- Event Cards Grid -->
             <div id="eventsGrid" class="events-grid">
-                <!-- Dynamically populated via JS -->
+                <!-- Populated dynamically via JS -->
             </div>
         </section>
 
         <!-- 3. Student Dashboard ("My Registrations") -->
-        <section id="dashboardSection" class="container" style="display: none; padding-top: 2rem;">
+        <section id="dashboardSection" class="container" style="display: none; padding-top: 2.5rem;">
             <div class="dashboard-section">
                 <div class="section-title-row">
                     <div>
-                        <h2>🎓 My Event Registrations</h2>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem;">View and manage your registered campus events and access passes.</p>
+                        <h2>🎓 My Event Passes</h2>
+                        <p style="color: var(--slate-600); font-size: 0.95rem; margin-top: 0.25rem;">
+                            View your active registration passes and manage attendance records.
+                        </p>
                     </div>
-                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('events')">+ Register More Events</button>
+                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('events')">+ Register For More</button>
                 </div>
                 <div id="myRegistrationsList" class="table-responsive">
                     <!-- Populated dynamically -->
@@ -116,16 +134,23 @@
             </div>
         </section>
 
-        <!-- 4. Admin Management Panel -->
-        <section id="adminSection" class="container" style="display: none; padding-top: 2rem;">
+        <!-- 4. Admin Event Management Panel -->
+        <section id="adminSection" class="container" style="display: none; padding-top: 2.5rem;">
             <div class="dashboard-section">
                 <div class="section-title-row">
                     <div>
-                        <h2>🛡️ Admin Event Management</h2>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem;">Create, edit, delete campus events, and manage attendee rosters.</p>
+                        <h2>🛡️ Admin Event Control Center</h2>
+                        <p style="color: var(--slate-600); font-size: 0.95rem; margin-top: 0.25rem;">
+                            Create new events, reschedule dates/times, postpone with notifications, and manage student rosters.
+                        </p>
                     </div>
-                    <button class="btn btn-primary btn-sm" onclick="openCreateEventModal()">+ Add New Campus Event</button>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn btn-primary" onclick="openCreateEventModal()">
+                            ✨ + Create New Event
+                        </button>
+                    </div>
                 </div>
+
                 <div class="table-responsive">
                     <table class="data-table">
                         <thead>
@@ -133,9 +158,10 @@
                                 <th>ID</th>
                                 <th>Event Title</th>
                                 <th>Category</th>
-                                <th>Date</th>
-                                <th>Registrations / Cap</th>
-                                <th>Actions</th>
+                                <th>Date &amp; Time</th>
+                                <th>Status</th>
+                                <th>Seats / Cap</th>
+                                <th style="text-align: right;">Admin Actions</th>
                             </tr>
                         </thead>
                         <tbody id="adminEventsTableBody">
@@ -152,25 +178,30 @@
     <!-- Event Details Modal -->
     <div id="eventDetailsModal" class="modal-overlay">
         <div class="modal-card">
-            <div style="position: relative; height: 200px; background: #000;">
+            <div style="position: relative; height: 220px; background: #000;">
                 <img id="modalDetailImg" src="" alt="" style="width: 100%; height: 100%; object-fit: cover;">
-                <span id="modalDetailCategory" class="event-badge" style="position: absolute; top: 1rem; left: 1rem;">Workshop</span>
-                <button class="modal-close" onclick="ui.closeModal('eventDetailsModal')" style="position: absolute; top: 0.75rem; right: 1rem; color: white; background: rgba(0,0,0,0.5); width: 32px; height: 32px; border-radius: 50%;">&times;</button>
+                <span id="modalDetailCategory" class="event-badge" style="position: absolute; top: 1.25rem; left: 1.25rem;">Workshop</span>
+                <button class="modal-close" onclick="ui.closeModal('eventDetailsModal')" style="position: absolute; top: 1rem; right: 1.25rem; color: white; background: rgba(0,0,0,0.6);">&times;</button>
             </div>
             <div class="modal-body">
-                <h2 id="modalDetailTitle" style="margin-bottom: 0.75rem;">Event Title</h2>
-                <p id="modalDetailDesc" style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.6;">Description</p>
+                <div id="modalDetailPostponedAlert" style="display: none;" class="postponed-notice-box">
+                    <span>⚠️</span>
+                    <span id="modalDetailPostponedText"></span>
+                </div>
+
+                <h2 id="modalDetailTitle" style="margin-bottom: 0.85rem;">Event Title</h2>
+                <p id="modalDetailDesc" style="color: var(--slate-600); margin-bottom: 1.5rem; line-height: 1.7;">Description</p>
                 
-                <div style="background: #f8fafc; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border); margin-bottom: 1rem;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.85rem;">
-                        <div><strong>📅 Date & Time:</strong> <br><span id="modalDetailDate"></span></div>
-                        <div><strong>📍 Location:</strong> <br><span id="modalDetailLocation"></span></div>
-                        <div><strong>🎤 Key Speaker:</strong> <br><span id="modalDetailSpeaker"></span></div>
+                <div style="background: var(--slate-50); padding: 1.2rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 1.25rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.88rem;">
+                        <div><strong>📅 Date &amp; Time:</strong> <br><span id="modalDetailDate"></span></div>
+                        <div><strong>📍 Venue / Location:</strong> <br><span id="modalDetailLocation"></span></div>
+                        <div><strong>🎤 Keynote / Speaker:</strong> <br><span id="modalDetailSpeaker"></span></div>
                         <div><strong>🏛️ Organizer:</strong> <br><span id="modalDetailOrganizer"></span></div>
                     </div>
                 </div>
 
-                <div style="font-size: 0.85rem; font-weight: 600; color: var(--primary); margin-top: 0.5rem;" id="modalDetailSeats">
+                <div style="font-size: 0.9rem; font-weight: 700; color: var(--brand-primary);" id="modalDetailSeats">
                     Seats remaining
                 </div>
             </div>
@@ -187,14 +218,14 @@
             <div class="modal-header">
                 <div>
                     <h3 class="modal-title">Event Registration</h3>
-                    <p id="regEventTitleDisplay" style="font-size: 0.85rem; color: var(--text-secondary);"></p>
+                    <p id="regEventTitleDisplay" style="font-size: 0.88rem; color: var(--slate-600); margin-top: 0.2rem;"></p>
                 </div>
                 <button class="modal-close" onclick="ui.closeModal('registrationModal')">&times;</button>
             </div>
             <form onsubmit="handleRegistrationSubmit(event)">
                 <div class="modal-body">
                     <input type="hidden" id="regEventId">
-                    <p id="regEventMetaDisplay" style="font-size: 0.85rem; color: var(--primary); font-weight: 600; margin-bottom: 1rem;"></p>
+                    <p id="regEventMetaDisplay" style="font-size: 0.88rem; color: var(--brand-primary); font-weight: 700; margin-bottom: 1.25rem;"></p>
 
                     <div class="form-group">
                         <label class="form-label">Full Name *</label>
@@ -213,12 +244,12 @@
 
                     <div class="form-group">
                         <label class="form-label">Department / Faculty</label>
-                        <input type="text" id="regStudentDept" class="form-control" placeholder="e.g. Computer Science & IT">
+                        <input type="text" id="regStudentDept" class="form-control" placeholder="e.g. Computer Science &amp; IT">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Special Notes / Dietary / Inquiries (Optional)</label>
-                        <textarea id="regNotes" class="form-control" rows="2" placeholder="Any queries or special accommodation requests..."></textarea>
+                        <label class="form-label">Special Inquiries / Accommodation (Optional)</label>
+                        <textarea id="regNotes" class="form-control" rows="2" placeholder="Any queries or special notes for event organizers..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -242,7 +273,7 @@
                     
                     <div class="form-group">
                         <label class="form-label">Event Title *</label>
-                        <input type="text" id="inputEventTitle" class="form-control" required placeholder="e.g. NextGen Web & AI Conference">
+                        <input type="text" id="inputEventTitle" class="form-control" required placeholder="e.g. NextGen Web &amp; AI Conference">
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -258,46 +289,46 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Total Capacity *</label>
-                            <input type="number" id="inputEventCapacity" class="form-control" required min="5" max="1000" value="50">
+                            <label class="form-label">Total Seat Capacity *</label>
+                            <input type="number" id="inputEventCapacity" class="form-control" required min="5" max="1000" value="60">
                         </div>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
-                            <label class="form-label">Date (YYYY-MM-DD) *</label>
+                            <label class="form-label">Scheduled Date (YYYY-MM-DD) *</label>
                             <input type="date" id="inputEventDate" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Time *</label>
+                            <label class="form-label">Scheduled Time *</label>
                             <input type="text" id="inputEventTime" class="form-control" required placeholder="e.g. 10:00 AM - 02:00 PM">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Venue / Location *</label>
+                        <label class="form-label">Venue / Location on Campus *</label>
                         <input type="text" id="inputEventLocation" class="form-control" required placeholder="e.g. Main Auditorium Hall B, UOL">
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
-                            <label class="form-label">Guest Speaker / Presenter</label>
+                            <label class="form-label">Keynote Speaker / Presenter</label>
                             <input type="text" id="inputEventSpeaker" class="form-control" placeholder="e.g. Dr. Salman">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Organizing Society / Dept</label>
-                            <input type="text" id="inputEventOrganizer" class="form-control" placeholder="e.g. CS Society">
+                            <label class="form-label">Organizing Society / Department</label>
+                            <input type="text" id="inputEventOrganizer" class="form-control" placeholder="e.g. ACM Student Chapter">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Cover Image URL</label>
+                        <label class="form-label">Cover Image URL (Optional)</label>
                         <input type="url" id="inputEventImage" class="form-control" placeholder="https://images.unsplash.com/...">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Description *</label>
-                        <textarea id="inputEventDesc" class="form-control" rows="3" required placeholder="Detailed information about the event..."></textarea>
+                        <label class="form-label">Detailed Event Description *</label>
+                        <textarea id="inputEventDesc" class="form-control" rows="3" required placeholder="Explain the agenda, learning outcomes, and requirements..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -308,9 +339,46 @@
         </div>
     </div>
 
+    <!-- Admin Postpone Event Modal -->
+    <div id="postponeModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div>
+                    <h3 class="modal-title">⏸️ Postpone / Reschedule Event</h3>
+                    <p id="postponeEventTitle" style="font-size: 0.88rem; color: var(--slate-600); margin-top: 0.2rem;"></p>
+                </div>
+                <button class="modal-close" onclick="ui.closeModal('postponeModal')">&times;</button>
+            </div>
+            <form id="postponeForm" onsubmit="handlePostponeSubmit(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="postponeEventId">
+
+                    <div class="form-group">
+                        <label class="form-label">New Scheduled Date *</label>
+                        <input type="date" id="postponeNewDate" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">New Scheduled Time (Optional)</label>
+                        <input type="text" id="postponeNewTime" class="form-control" placeholder="e.g. 11:30 AM - 03:30 PM">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Postponement Reason / Notice to Students *</label>
+                        <textarea id="postponeReason" class="form-control" rows="3" required placeholder="e.g. Rescheduled due to midterm examination schedule. All confirmed registrations remain valid."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="ui.closeModal('postponeModal')">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Confirm Postponement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Attendees List Modal -->
     <div id="attendeesModal" class="modal-overlay">
-        <div class="modal-card" style="max-width: 680px;">
+        <div class="modal-card" style="max-width: 720px;">
             <div class="modal-header">
                 <h3 class="modal-title" id="attendeesModalTitle">Registered Attendees</h3>
                 <button class="modal-close" onclick="ui.closeModal('attendeesModal')">&times;</button>
@@ -333,21 +401,21 @@
             </div>
             
             <div class="modal-body">
-                <!-- Quick 1-Click Demo Accounts -->
+                <!-- Quick 1-Click Fast Logins -->
                 <div class="demo-accounts-box">
-                    <div class="demo-title">⚡ 1-Click Fast Login for Testing:</div>
+                    <div class="demo-title">⚡ 1-Click Instant Testing Credentials:</div>
                     <div class="demo-btns">
                         <button type="button" class="btn btn-secondary btn-sm" onclick="quickDemoLogin('habiba')">
-                            👑 Umme Habiba (Lead / Admin)
+                            👑 Umme Habiba (Admin)
                         </button>
                         <button type="button" class="btn btn-secondary btn-sm" onclick="quickDemoLogin('zoha')">
-                            🎨 Zoha Khalid (Frontend)
+                            🎨 Zoha Khalid (Student)
                         </button>
                         <button type="button" class="btn btn-secondary btn-sm" onclick="quickDemoLogin('laiba')">
-                            ⚙️ Laiba Aamir (Backend)
+                            ⚙️ Laiba Aamir (Student)
                         </button>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="quickDemoLogin('admin')">
-                            🛡️ System Admin
+                        <button type="button" class="btn btn-primary btn-sm" onclick="quickDemoLogin('admin')">
+                            🛡️ Campus Admin
                         </button>
                     </div>
                 </div>
@@ -360,12 +428,12 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Department</label>
-                            <input type="text" id="authDepartment" class="form-control" placeholder="e.g. Computer Science">
+                            <input type="text" id="authDepartment" class="form-control" placeholder="e.g. Computer Science &amp; IT">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Email Address *</label>
+                        <label class="form-label">University Email Address *</label>
                         <input type="email" id="authEmail" class="form-control" required placeholder="user@student.uol.edu.pk">
                     </div>
 
@@ -379,8 +447,8 @@
                     </button>
                 </form>
 
-                <p id="authModeSwitchText" style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-secondary);">
-                    Don't have an account? <a href="#" onclick="openSignupModal(); return false;">Create one here</a>
+                <p id="authModeSwitchText" style="text-align: center; margin-top: 1.25rem; font-size: 0.88rem; color: var(--slate-600);">
+                    Don't have an account? <a href="#" onclick="openSignupModal(); return false;" style="color: var(--brand-primary); font-weight: 700;">Create one here</a>
                 </p>
             </div>
         </div>

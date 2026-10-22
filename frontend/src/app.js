@@ -1,12 +1,11 @@
-// Main Frontend Application Logic
-// Orchestrates views, APIs, event handling, search & filtering
+// Campus Event Management System - Main Frontend Application Logic
+// Orchestrates views, search & filtering, event creation, postponements, registrations
 
 let allEvents = [];
 let currentCategory = 'All';
 let currentSearch = '';
 let currentView = 'home';
 
-// Initialize application on DOM load
 document.addEventListener('DOMContentLoaded', async () => {
     renderNavbar();
     renderFooter();
@@ -15,7 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupEventListeners();
 });
 
-// Setup event listeners for search and filters
 function setupEventListeners() {
     const searchInput = document.getElementById('eventSearchInput');
     if (searchInput) {
@@ -25,7 +23,6 @@ function setupEventListeners() {
         });
     }
 
-    // Category pills click handler
     document.querySelectorAll('.category-pill').forEach(pill => {
         pill.addEventListener('click', (e) => {
             document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
@@ -36,7 +33,6 @@ function setupEventListeners() {
     });
 }
 
-// Load campus statistics from API
 async function loadStats() {
     try {
         const stats = await api.getStats();
@@ -54,7 +50,6 @@ async function loadStats() {
     }
 }
 
-// Fetch all events from backend REST API
 async function loadEvents() {
     try {
         const response = await api.getEvents();
@@ -67,10 +62,10 @@ async function loadEvents() {
         const grid = document.getElementById('eventsGrid');
         if (grid) {
             grid.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: white; border-radius: 12px; border: 1px solid var(--border);">
-                    <p style="color: var(--danger); font-weight: 600;">⚠️ Could not connect to the backend API.</p>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">
-                        Make sure the backend server is running with <code>npm start</code> at http://localhost:5000.
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: white; border-radius: 14px; border: 1px solid var(--border-subtle);">
+                    <p style="color: var(--accent-rose); font-weight: 700;">⚠️ Could not connect to API server.</p>
+                    <p style="color: var(--slate-600); font-size: 0.9rem; margin-top: 0.5rem;">
+                        Make sure server is running with <code>npm start</code> or refresh to load cached catalog.
                     </p>
                 </div>
             `;
@@ -78,7 +73,6 @@ async function loadEvents() {
     }
 }
 
-// Filter and render event cards in grid
 function filterAndDisplayEvents() {
     const grid = document.getElementById('eventsGrid');
     if (!grid) return;
@@ -104,13 +98,13 @@ function filterAndDisplayEvents() {
 
     if (filtered.length === 0) {
         grid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; background: white; border-radius: 12px; border: 1px solid var(--border);">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
-                <h3 style="margin-bottom: 0.5rem;">No Events Found</h3>
-                <p style="color: var(--text-secondary); font-size: 0.95rem;">
-                    Try clearing your search filters or browse other categories.
+            <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; background: white; border-radius: 16px; border: 1px solid var(--border-subtle);">
+                <div style="font-size: 3.5rem; margin-bottom: 1rem;">🔍</div>
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.4rem;">No Campus Events Found</h3>
+                <p style="color: var(--slate-600); font-size: 0.95rem;">
+                    Try clearing your search query or select another category filter.
                 </p>
-                <button class="btn btn-secondary btn-sm" style="margin-top: 1rem;" onclick="resetFilters()">
+                <button class="btn btn-secondary btn-sm" style="margin-top: 1.25rem;" onclick="resetFilters()">
                     Reset Filters
                 </button>
             </div>
@@ -132,12 +126,10 @@ function resetFilters() {
     filterAndDisplayEvents();
 }
 
-// Navigation between views (SPA layout)
 function navigateTo(view) {
     currentView = view;
     renderNavbar();
 
-    // Toggle view containers
     const homeSection = document.getElementById('homeSection');
     const eventsSection = document.getElementById('eventsSection');
     const dashboardSection = document.getElementById('dashboardSection');
@@ -148,7 +140,6 @@ function navigateTo(view) {
     if (dashboardSection) dashboardSection.style.display = view === 'dashboard' ? 'block' : 'none';
     if (adminSection) adminSection.style.display = view === 'admin' ? 'block' : 'none';
 
-    // Update active navbar item
     document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
     if (view === 'home') document.getElementById('navHome')?.classList.add('active');
     if (view === 'events') document.getElementById('navEvents')?.classList.add('active');
@@ -181,6 +172,15 @@ async function openEventDetailsModal(eventId) {
         document.getElementById('modalDetailOrganizer').textContent = e.organizer || 'Event Committee';
         document.getElementById('modalDetailSeats').textContent = `${e.available_seats} of ${e.capacity} seats remaining`;
 
+        const alertBox = document.getElementById('modalDetailPostponedAlert');
+        const alertText = document.getElementById('modalDetailPostponedText');
+        if (e.status === 'postponed') {
+            alertBox.style.display = 'flex';
+            alertText.textContent = `Event Postponed: ${e.postponed_note || `Rescheduled to ${e.date}`}`;
+        } else {
+            alertBox.style.display = 'none';
+        }
+
         const regBtn = document.getElementById('modalDetailRegisterBtn');
         if (regBtn) {
             if (e.available_seats <= 0) {
@@ -202,20 +202,61 @@ async function openEventDetailsModal(eventId) {
     }
 }
 
-// --- Student Registration Form & Modal ---
+// --- Postpone Modal & Functionality ---
+function openPostponeModal(eventId) {
+    const event = allEvents.find(e => e.id === eventId);
+    if (!event) return;
+
+    document.getElementById('postponeEventId').value = event.id;
+    document.getElementById('postponeEventTitle').textContent = event.title;
+    document.getElementById('postponeNewDate').value = event.date;
+    document.getElementById('postponeNewTime').value = event.time;
+    document.getElementById('postponeReason').value = `Rescheduled to ${event.date}. All current registrations remain confirmed.`;
+
+    ui.openModal('postponeModal');
+}
+
+async function handlePostponeSubmit(e) {
+    e.preventDefault();
+    const eventId = parseInt(document.getElementById('postponeEventId').value, 10);
+    const newDate = document.getElementById('postponeNewDate').value;
+    const newTime = document.getElementById('postponeNewTime').value.trim();
+    const reason = document.getElementById('postponeReason').value.trim();
+
+    if (!newDate) {
+        ui.showToast('Please specify a new date for the event.', 'error');
+        return;
+    }
+
+    try {
+        const res = await api.postponeEvent(eventId, newDate, newTime, reason);
+        if (res.success) {
+            ui.closeModal('postponeModal');
+            ui.showToast(`📢 Event postponed to ${newDate} successfully!`);
+            await loadEvents();
+            if (currentView === 'admin') {
+                await loadAdminDashboard();
+            }
+        }
+    } catch (err) {
+        ui.showToast(err.message, 'error');
+    }
+}
+
+// --- Student Registration Form ---
 function prepareRegistrationModal(eventId) {
     const event = allEvents.find(e => e.id === eventId);
     if (!event) return;
 
     document.getElementById('regEventId').value = event.id;
     document.getElementById('regEventTitleDisplay').textContent = event.title;
-    document.getElementById('regEventMetaDisplay').textContent = `${event.date} • ${event.location}`;
+    document.getElementById('regEventMetaDisplay').textContent = `Scheduled: ${event.date} • ${event.location}`;
 
     const user = auth.getUser();
     if (user) {
         document.getElementById('regStudentName').value = user.name;
         document.getElementById('regStudentEmail').value = user.email;
-        document.getElementById('regStudentDept').value = user.department || 'Computer Science';
+        document.getElementById('regStudentDept').value = user.department || 'Computer Science & IT';
     } else {
         document.getElementById('regStudentName').value = '';
         document.getElementById('regStudentEmail').value = '';
@@ -235,7 +276,7 @@ async function handleRegistrationSubmit(event) {
     const notes = document.getElementById('regNotes').value.trim();
 
     if (!name || !email) {
-        ui.showToast('Please provide your name and university email.', 'error');
+        ui.showToast('Please provide your full name and university email.', 'error');
         return;
     }
 
@@ -252,7 +293,7 @@ async function handleRegistrationSubmit(event) {
         const res = await api.registerForEvent(payload);
         if (res.success) {
             ui.closeModal('registrationModal');
-            ui.showToast('🎉 Successfully registered for the event!');
+            ui.showToast('🎉 Successfully registered! Your seat has been reserved.');
             await loadEvents();
             await loadStats();
         }
@@ -269,9 +310,11 @@ async function loadUserDashboard() {
     const user = auth.getUser();
     if (!user) {
         container.innerHTML = `
-            <div style="text-align: center; padding: 3rem;">
-                <p>Please login to view your registered events.</p>
-                <button class="btn btn-primary btn-sm" style="margin-top: 1rem;" onclick="openLoginModal()">Login</button>
+            <div style="text-align: center; padding: 3.5rem 1rem;">
+                <p style="font-size: 1.1rem; color: var(--slate-700); margin-bottom: 1rem;">
+                    Please sign in to access your registered event passes.
+                </p>
+                <button class="btn btn-primary btn-sm" onclick="openLoginModal()">Sign In Now</button>
             </div>
         `;
         return;
@@ -283,9 +326,11 @@ async function loadUserDashboard() {
 
         if (registrations.length === 0) {
             container.innerHTML = `
-                <div style="text-align: center; padding: 3rem;">
-                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">You have not registered for any events yet.</p>
-                    <button class="btn btn-primary btn-sm" onclick="navigateTo('events')">Browse Events</button>
+                <div style="text-align: center; padding: 3.5rem 1rem;">
+                    <p style="color: var(--slate-600); font-size: 1rem; margin-bottom: 1.25rem;">
+                        You have not registered for any events yet.
+                    </p>
+                    <button class="btn btn-primary btn-sm" onclick="navigateTo('events')">Browse Campus Events</button>
                 </div>
             `;
             return;
@@ -295,32 +340,32 @@ async function loadUserDashboard() {
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Event</th>
+                        <th>Event Name</th>
                         <th>Category</th>
-                        <th>Date & Venue</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>Date &amp; Venue</th>
+                        <th>Booking Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${registrations.map(r => `
                         <tr>
                             <td>
-                                <strong>${r.event_title}</strong>
+                                <strong>${escapeHtml(r.event_title)}</strong>
                             </td>
                             <td><span class="event-badge ${r.event_category}">${r.event_category}</span></td>
-                            <td>${r.event_date} <br><small style="color: var(--text-muted);">${r.event_location}</small></td>
+                            <td>${r.event_date} <br><small style="color: var(--slate-400);">${escapeHtml(r.event_location)}</small></td>
                             <td>
                                 <span class="badge-status ${r.status === 'confirmed' ? 'badge-confirmed' : 'badge-cancelled'}">
-                                    ${r.status}
+                                    ${r.status === 'confirmed' ? '✅ Confirmed Pass' : '❌ Cancelled'}
                                 </span>
                             </td>
                             <td>
                                 ${r.status === 'confirmed' ? `
                                     <button class="btn btn-danger btn-sm" onclick="cancelRegistrationAction(${r.id})">
-                                        Cancel Registration
+                                        Cancel Pass
                                     </button>
-                                ` : '<span style="color: var(--text-muted); font-size: 0.8rem;">Cancelled</span>'}
+                                ` : '<span style="color: var(--slate-400); font-size: 0.85rem;">Booking Void</span>'}
                             </td>
                         </tr>
                     `).join('')}
@@ -328,19 +373,19 @@ async function loadUserDashboard() {
             </table>
         `;
     } catch (err) {
-        container.innerHTML = `<p style="color: var(--danger);">Failed to load registrations: ${err.message}</p>`;
+        container.innerHTML = `<p style="color: var(--accent-rose);">Failed to load registrations: ${err.message}</p>`;
     }
 }
 
 async function cancelRegistrationAction(registrationId) {
-    if (!confirm('Are you sure you want to cancel your event registration? Your seat will be released.')) {
+    if (!confirm('Are you sure you want to cancel your event registration? Your seat will be released immediately.')) {
         return;
     }
 
     try {
         const res = await api.cancelRegistration(registrationId);
         if (res.success) {
-            ui.showToast('Registration cancelled. Seat released.');
+            ui.showToast('Registration cancelled. Seat returned to pool.');
             await loadUserDashboard();
             await loadEvents();
             await loadStats();
@@ -350,7 +395,7 @@ async function cancelRegistrationAction(registrationId) {
     }
 }
 
-// --- Admin Panel & Management ---
+// --- Admin Panel Dashboard ---
 async function loadAdminDashboard() {
     const tableBody = document.getElementById('adminEventsTableBody');
     if (!tableBody) return;
@@ -359,30 +404,44 @@ async function loadAdminDashboard() {
         const res = await api.getEvents();
         const events = res.events || [];
 
-        tableBody.innerHTML = events.map(e => `
-            <tr>
-                <td><strong>#${e.id}</strong></td>
-                <td><strong>${e.title}</strong></td>
-                <td><span class="event-badge ${e.category}">${e.category}</span></td>
-                <td>${e.date}</td>
-                <td>${e.registered_count || 0} / ${e.capacity}</td>
-                <td>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-secondary btn-sm" onclick="openAttendeesModal(${e.id}, '${escapeHtml(e.title)}')">
-                            Attendees
-                        </button>
-                        <button class="btn btn-outline btn-sm" onclick="openEditEventModal(${e.id})">
-                            Edit
-                        </button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteEventAction(${e.id})">
-                            Delete
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
+        tableBody.innerHTML = events.map(e => {
+            const isPostponed = e.status === 'postponed';
+            return `
+                <tr>
+                    <td><strong>#${e.id}</strong></td>
+                    <td>
+                        <strong>${escapeHtml(e.title)}</strong>
+                        ${isPostponed ? `<br><small style="color: #b45309; font-weight: 600;">⚠️ ${escapeHtml(e.postponed_note || 'Rescheduled')}</small>` : ''}
+                    </td>
+                    <td><span class="event-badge ${e.category}">${e.category}</span></td>
+                    <td><strong>${e.date}</strong> <br><small style="color: var(--slate-400);">${escapeHtml(e.time)}</small></td>
+                    <td>
+                        <span class="badge-status ${isPostponed ? 'badge-postponed' : 'badge-upcoming'}">
+                            ${isPostponed ? '⏸️ Postponed' : '🟢 Scheduled'}
+                        </span>
+                    </td>
+                    <td>${e.registered_count || (e.capacity - e.available_seats) || 0} / ${e.capacity}</td>
+                    <td style="text-align: right;">
+                        <div style="display: inline-flex; gap: 0.4rem;">
+                            <button class="btn btn-warning btn-sm" onclick="openPostponeModal(${e.id})" title="Postpone or Reschedule Event">
+                                ⏸️ Postpone
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="openAttendeesModal(${e.id}, '${escapeHtml(e.title)}')">
+                                👥 Attendees
+                            </button>
+                            <button class="btn btn-outline btn-sm" onclick="openEditEventModal(${e.id})">
+                                ✏️ Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteEventAction(${e.id})">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     } catch (err) {
-        tableBody.innerHTML = `<tr><td colspan="6" style="color: var(--danger);">Error: ${err.message}</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="7" style="color: var(--accent-rose);">Error: ${err.message}</td></tr>`;
     }
 }
 
@@ -390,6 +449,13 @@ function openCreateEventModal() {
     document.getElementById('eventFormTitle').textContent = 'Create New Campus Event';
     document.getElementById('eventFormId').value = '';
     document.getElementById('adminEventForm').reset();
+    
+    // Default today's or future date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('inputEventDate').value = today;
+    document.getElementById('inputEventTime').value = '10:00 AM - 02:00 PM';
+    document.getElementById('inputEventCapacity').value = '60';
+
     ui.openModal('adminEventModal');
 }
 
@@ -440,7 +506,7 @@ async function handleAdminEventSubmit(event) {
             ui.showToast('Event updated successfully!');
         } else {
             await api.createEvent(payload);
-            ui.showToast('New event created successfully!');
+            ui.showToast('New campus event scheduled successfully!');
         }
         ui.closeModal('adminEventModal');
         await loadEvents();
@@ -454,7 +520,7 @@ async function handleAdminEventSubmit(event) {
 }
 
 async function deleteEventAction(eventId) {
-    if (!confirm(`Are you sure you want to delete Event #${eventId}? This cannot be undone.`)) {
+    if (!confirm(`Are you sure you want to delete Event #${eventId}? This will remove all associated registrations.`)) {
         return;
     }
 
@@ -470,9 +536,9 @@ async function deleteEventAction(eventId) {
 }
 
 async function openAttendeesModal(eventId, eventTitle) {
-    document.getElementById('attendeesModalTitle').textContent = `Registrants for: ${eventTitle}`;
+    document.getElementById('attendeesModalTitle').textContent = `Attendees: ${eventTitle}`;
     const listContainer = document.getElementById('attendeesListContainer');
-    listContainer.innerHTML = '<p>Loading attendee records...</p>';
+    listContainer.innerHTML = '<p style="padding: 1rem 0;">Fetching attendee records...</p>';
     ui.openModal('attendeesModal');
 
     try {
@@ -480,7 +546,7 @@ async function openAttendeesModal(eventId, eventTitle) {
         const registrations = res.registrations || [];
 
         if (registrations.length === 0) {
-            listContainer.innerHTML = '<p style="color: var(--text-secondary); padding: 1.5rem 0;">No students registered for this event yet.</p>';
+            listContainer.innerHTML = '<p style="color: var(--slate-600); padding: 2rem 0; text-align: center;">No students have registered for this event yet.</p>';
             return;
         }
 
@@ -492,7 +558,6 @@ async function openAttendeesModal(eventId, eventTitle) {
                         <th>Student Name</th>
                         <th>Email</th>
                         <th>Department</th>
-                        <th>Registration Date</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -500,10 +565,9 @@ async function openAttendeesModal(eventId, eventTitle) {
                     ${registrations.map((r, i) => `
                         <tr>
                             <td>${i + 1}</td>
-                            <td><strong>${r.user_name}</strong></td>
-                            <td>${r.user_email}</td>
-                            <td>${r.user_department || 'Computer Science'}</td>
-                            <td>${r.registration_date}</td>
+                            <td><strong>${escapeHtml(r.user_name)}</strong></td>
+                            <td>${escapeHtml(r.user_email)}</td>
+                            <td>${escapeHtml(r.user_department || 'Computer Science')}</td>
                             <td>
                                 <span class="badge-status ${r.status === 'confirmed' ? 'badge-confirmed' : 'badge-cancelled'}">
                                     ${r.status}
@@ -515,7 +579,7 @@ async function openAttendeesModal(eventId, eventTitle) {
             </table>
         `;
     } catch (err) {
-        listContainer.innerHTML = `<p style="color: var(--danger);">Failed to fetch attendees: ${err.message}</p>`;
+        listContainer.innerHTML = `<p style="color: var(--accent-rose);">Failed to fetch attendees: ${err.message}</p>`;
     }
 }
 
@@ -524,7 +588,7 @@ function openLoginModal() {
     document.getElementById('authModalTitle').textContent = 'Sign In to Campus EventHub';
     document.getElementById('signupExtraFields').style.display = 'none';
     document.getElementById('authSubmitBtn').textContent = 'Sign In';
-    document.getElementById('authModeSwitchText').innerHTML = `Don't have an account? <a href="#" onclick="openSignupModal(); return false;">Create one here</a>`;
+    document.getElementById('authModeSwitchText').innerHTML = `Don't have an account? <a href="#" onclick="openSignupModal(); return false;" style="color: var(--brand-primary); font-weight: 700;">Create one here</a>`;
     document.getElementById('authForm').setAttribute('data-mode', 'login');
     ui.openModal('authModal');
 }
@@ -533,7 +597,7 @@ function openSignupModal() {
     document.getElementById('authModalTitle').textContent = 'Register New Student Account';
     document.getElementById('signupExtraFields').style.display = 'block';
     document.getElementById('authSubmitBtn').textContent = 'Create Account';
-    document.getElementById('authModeSwitchText').innerHTML = `Already have an account? <a href="#" onclick="openLoginModal(); return false;">Sign In</a>`;
+    document.getElementById('authModeSwitchText').innerHTML = `Already have an account? <a href="#" onclick="openLoginModal(); return false;" style="color: var(--brand-primary); font-weight: 700;">Sign In</a>`;
     document.getElementById('authForm').setAttribute('data-mode', 'signup');
     ui.openModal('authModal');
 }
@@ -549,13 +613,14 @@ async function handleAuthSubmit(event) {
             const name = document.getElementById('authName').value.trim();
             const department = document.getElementById('authDepartment').value.trim();
             await auth.signup({ name, email, password, department, role: 'student' });
-            ui.showToast('Account created successfully!');
+            ui.showToast('Account registered successfully!');
         } else {
             await auth.login(email, password);
             ui.showToast('Signed in successfully!');
         }
         ui.closeModal('authModal');
         renderNavbar();
+        await loadEvents();
         await loadStats();
     } catch (err) {
         ui.showToast(err.message, 'error');
@@ -567,7 +632,8 @@ async function quickDemoLogin(role) {
         await auth.demoLogin(role);
         ui.closeModal('authModal');
         renderNavbar();
-        ui.showToast(`Logged in as ${role.toUpperCase()} demo user!`);
+        ui.showToast(`Logged in as ${role.toUpperCase()} user!`);
+        await loadEvents();
         await loadStats();
         if (role === 'admin' || role === 'habiba') {
             navigateTo('admin');
@@ -577,8 +643,7 @@ async function quickDemoLogin(role) {
     }
 }
 
-// Helper to escape HTML strings safely
 function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }

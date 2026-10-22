@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS events (
     speaker TEXT DEFAULT 'University Guest',
     organizer TEXT DEFAULT 'Campus Event Committee',
     image_url TEXT,
+    status TEXT NOT NULL DEFAULT 'upcoming', -- 'upcoming', 'postponed', 'completed', 'cancelled'
+    postponed_note TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -77,6 +77,13 @@ const initSchema = async () => {
         const schemaSql = fs.readFileSync(schemaPath, 'utf8');
         await query.exec(schemaSql);
     }
+    // Safe migrations for new columns
+    try {
+        await query.run("ALTER TABLE events ADD COLUMN status TEXT DEFAULT 'upcoming'");
+    } catch (e) { /* column already exists */ }
+    try {
+        await query.run("ALTER TABLE events ADD COLUMN postponed_note TEXT");
+    } catch (e) { /* column already exists */ }
 };
 
 module.exports = {

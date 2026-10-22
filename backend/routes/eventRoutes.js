@@ -15,6 +15,10 @@ router.post('/', optionalToken, eventController.createEvent);
 // PUT /api/events/:id - Update existing event
 router.put('/:id', optionalToken, eventController.updateEvent);
 
+// POST /api/events/:id/postpone - Postpone / reschedule an event
+router.post('/:id/postpone', optionalToken, eventController.postponeEvent);
+router.put('/:id/postpone', optionalToken, eventController.postponeEvent);
+
 // DELETE /api/events/:id - Delete event
 router.delete('/:id', optionalToken, eventController.deleteEvent);
 

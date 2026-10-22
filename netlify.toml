@@ -1,0 +1,10 @@
+# Netlify Configuration for Campus Event Management System
+
+[build]
+  publish = "frontend"
+  command = "echo 'Front-end build ready'"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

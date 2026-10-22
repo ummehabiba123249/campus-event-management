@@ -1,4 +1,4 @@
-// Footer Component
+// Footer Component - Modernized & Branded
 
 function renderFooter() {
     const footerContainer = document.getElementById('footerContainer');
@@ -9,40 +9,40 @@ function renderFooter() {
             <div class="container">
                 <div class="footer-grid">
                     <div class="footer-col">
-                        <h4>🏛️ Campus Event Management</h4>
-                        <p style="font-size: 0.9rem; margin-bottom: 1rem;">
-                            An integrated Full-Stack platform designed for university students to explore, register, and organize campus seminars, workshops, and sports galas.
+                        <h4>🏛️ Campus EventHub</h4>
+                        <p style="font-size: 0.92rem; line-height: 1.6; margin-bottom: 1rem; color: var(--slate-400);">
+                            The official next-generation Full-Stack event coordination platform designed for university students to explore, register, and organize campus seminars, workshops, sports galas, and tech competitions.
                         </p>
-                        <p style="font-size: 0.8rem; color: #64748b;">
-                            The University of Lahore (UOL) • Fall 2026
+                        <p style="font-size: 0.82rem; color: #64748b; font-weight: 600;">
+                            The University of Lahore (UOL) • Department of CS &amp; IT
                         </p>
                     </div>
 
                     <div class="footer-col">
-                        <h4>👥 Development Team</h4>
+                        <h4>👥 Software Engineering Team</h4>
                         <ul class="team-list">
-                            <li><span class="team-badge">Student 1 (Lead):</span> Umme Habiba (70176821@student.uol.edu.pk)</li>
+                            <li><span class="team-badge">Student 1 (Team Lead):</span> Umme Habiba (70176821@student.uol.edu.pk)</li>
                             <li><span class="team-badge">Student 2 (Frontend 1):</span> Zoha Khalid</li>
                             <li><span class="team-badge">Student 3 (Frontend 2):</span> Umme Habiba</li>
                             <li><span class="team-badge">Student 4 (Backend 1):</span> Laiba Aamir</li>
-                            <li><span class="team-badge">Student 5 (DB & Testing):</span> Laiba Aamir</li>
+                            <li><span class="team-badge">Student 5 (DB &amp; Testing):</span> Laiba Aamir</li>
                         </ul>
                     </div>
 
                     <div class="footer-col">
-                        <h4>🛠️ Technologies</h4>
-                        <ul class="footer-links" style="font-size: 0.85rem;">
-                            <li>• Front End: HTML5, CSS3, Vanilla JS</li>
-                            <li>• Back End: Node.js & Express.js</li>
-                            <li>• Database: SQLite (Relational DB)</li>
-                            <li>• Version Control: Git & GitHub Collaboration</li>
-                            <li>• Auth: JWT & Role-Based Access Control</li>
+                        <h4>🛠️ Production Stack</h4>
+                        <ul class="footer-links">
+                            <li>• Modern Semantic HTML5 &amp; Custom CSS3 Design</li>
+                            <li>• Node.js &amp; Express RESTful API Server</li>
+                            <li>• SQLite Relational Database Engine</li>
+                            <li>• JWT Authentication &amp; Role-Based Access</li>
+                            <li>• Automated Testing &amp; CI/CD Pipelines</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="footer-bottom">
-                    <p>© 2026 Campus Event Management System. Created by Umme Habiba, Zoha Khalid, and Laiba Aamir.</p>
+                    <p>© 2026 Campus Event Management System. Created by Umme Habiba, Zoha Khalid, and Laiba Aamir. All rights reserved.</p>
                 </div>
             </div>
         </footer>
