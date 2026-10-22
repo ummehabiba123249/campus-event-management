@@ -1,0 +1,30 @@
+{
+  "name": "campus-event-management",
+  "version": "1.0.0",
+  "description": "Full-Stack Campus Event Management System with Git & GitHub Collaboration",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js",
+    "seed": "node backend/database/seed.js",
+    "test": "node backend/tests/api.test.js"
+  },
+  "keywords": [
+    "campus-event-management",
+    "full-stack",
+    "express",
+    "sqlite",
+    "rest-api",
+    "uol"
+  ],
+  "author": "Umme Habiba, Zoha Khalid, Laiba Aamir",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "sqlite3": "^6.0.1"
+  }
+}
