@@ -1,0 +1,35 @@
+name: Campus Event Management CI/CD
+
+on:
+  push:
+    branches: [ main, feature/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Automated Unit & API Testing
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install NPM Dependencies
+      run: npm ci || npm install
+
+    - name: Seed SQLite Database
+      run: npm run seed
+
+    - name: Run Automated API Tests
+      run: npm test
