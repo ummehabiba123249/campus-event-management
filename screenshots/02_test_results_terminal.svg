@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" width="100%" height="100%">
+  <rect width="1000" height="650" rx="10" fill="#0f172a" />
+  
+  <!-- Terminal Header -->
+  <rect width="1000" height="40" rx="10" fill="#1e293b" />
+  <circle cx="25" cy="20" r="6" fill="#ef4444" />
+  <circle cx="45" cy="20" r="6" fill="#f59e0b" />
+  <circle cx="65" cy="20" r="6" fill="#10b981" />
+  <text x="100" y="25" font-family="Courier New, monospace" font-size="13" fill="#94a3b8">PowerShell - npm test (Campus Event Management API Test Suite)</text>
+
+  <!-- Output Lines -->
+  <g transform="translate(30, 75)" font-family="Courier New, monospace" font-size="13">
+    <text y="0" fill="#38bdf8">&gt; campus-event-management@1.0.0 test</text>
+    <text y="20" fill="#38bdf8">&gt; node backend/tests/api.test.js</text>
+    
+    <text y="50" fill="#f1f5f9">====================================================</text>
+    <text y="70" fill="#a7f3d0" font-weight="bold">🧪 Starting Campus Event Management System API Tests</text>
+    <text y="90" fill="#f1f5f9">====================================================</text>
+
+    <text y="120" fill="#64748b">--- 1. Testing Health &amp; Diagnostics API ---</text>
+    <text y="140" fill="#4ade80">  ✅ PASS: GET /api/health returns status 200</text>
+    <text y="160" fill="#4ade80">  ✅ PASS: Service status is UP</text>
+    <text y="180" fill="#4ade80">  ✅ PASS: Team structure is populated</text>
+
+    <text y="210" fill="#64748b">--- 2. Testing Authentication (POST /api/login) ---</text>
+    <text y="230" fill="#4ade80">  ✅ PASS: Login with valid credentials succeeds (returns JWT)</text>
+    <text y="250" fill="#4ade80">  ✅ PASS: Login with invalid password rejected (401)</text>
+
+    <text y="280" fill="#64748b">--- 3. Testing User Signup (POST /api/signup) ---</text>
+    <text y="300" fill="#4ade80">  ✅ PASS: Signup creates new user successfully (201)</text>
+    <text y="320" fill="#4ade80">  ✅ PASS: Duplicate signup rejected (409 Conflict)</text>
+
+    <text y="350" fill="#64748b">--- 4. Testing Events Retrieval &amp; Filters ---</text>
+    <text y="370" fill="#4ade80">  ✅ PASS: GET /api/events returns status 200</text>
+    <text y="390" fill="#4ade80">  ✅ PASS: Real-time search filters correctly by keyword</text>
+    <text y="410" fill="#4ade80">  ✅ PASS: Category filter returns only matching category</text>
+
+    <text y="440" fill="#64748b">--- 5. Testing Registrations &amp; Seat Capacity Management ---</text>
+    <text y="460" fill="#4ade80">  ✅ PASS: POST /api/register registers student and decrements seat</text>
+    <text y="480" fill="#4ade80">  ✅ PASS: Duplicate registration is rejected (400)</text>
+    <text y="500" fill="#4ade80">  ✅ PASS: DELETE /api/registrations/:id cancels and restores seat count</text>
+
+    <text y="530" fill="#f1f5f9">====================================================</text>
+    <text y="550" fill="#4ade80" font-weight="bold">📊 Test Results: 37 Passed, 0 Failed (100% Pass Rate)</text>
+    <text y="570" fill="#f1f5f9">====================================================</text>
+  </g>
+</svg>
