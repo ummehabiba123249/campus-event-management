@@ -252,6 +252,13 @@
       var tid = setTimeout(function () { ctrl.abort(); }, 3500);
       opts.signal = ctrl.signal;
 
+      // Instant Netlify static hosting handling (no lag/timeouts)
+      if (window.location.hostname.includes('netlify.app') && !localStorage.getItem('UOL_API_URL')) {
+        clearTimeout(tid);
+        isLiveApi = false;
+        return api.offlineFallback(path, opts);
+      }
+
       try {
         var res = await fetch(url, opts);
         clearTimeout(tid);
@@ -406,6 +413,11 @@
 
       // 9. Get Registrations
       if (path.startsWith('/api/registrations') && method === 'GET') {
+        if (path.includes('/event/')) {
+          var eid = parseInt(path.split('/event/')[1], 10);
+          var eregs = localRegs.filter(function (r) { return r.eventId === eid; });
+          return { success: true, registrations: eregs };
+        }
         if (path.includes('/user/')) {
           var uid2 = parseInt(path.split('/user/')[1], 10);
           var myregs = localRegs.filter(function (r) { return r.userId === uid2 || (session && r.email === session.email); });
