@@ -1,8 +1,17 @@
-# Netlify Configuration for Campus Event Management System
+# Netlify Configuration for Campus Event Management System with AWS RDS MySQL
 
 [build]
   publish = "frontend"
-  command = "echo 'Front-end build ready'"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["backend/database/global-bundle.pem", "backend/database/schema.mysql.sql"]
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
 
 [[redirects]]
   from = "/*"

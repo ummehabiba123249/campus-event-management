@@ -249,15 +249,10 @@
 
       var url = (API_BASE ? API_BASE : '') + path;
       var ctrl = new AbortController();
-      var tid = setTimeout(function () { ctrl.abort(); }, 3500);
+      var tid = setTimeout(function () { ctrl.abort(); }, 12000);
       opts.signal = ctrl.signal;
 
-      // Instant Netlify static hosting handling (no lag/timeouts)
-      if (window.location.hostname.includes('netlify.app') && !localStorage.getItem('UOL_API_URL')) {
-        clearTimeout(tid);
-        isLiveApi = false;
-        return api.offlineFallback(path, opts);
-      }
+      // Netlify serverless function handles /api requests live on AWS RDS MySQL
 
       try {
         var res = await fetch(url, opts);
@@ -611,7 +606,7 @@
         '</div>' +
       '</div></header>' +
       '<main><div class="wrap" id="page"><div class="empty">Loading campus data...</div></div>' +
-      '<div class="wrap"><div class="foot-info">The University of Lahore — Campus Event Management System &bull; Active DB: SQLite &bull; Team: Umme Habiba, Zoha Khalid, Laiba Aamir</div></div></main>';
+      '<div class="wrap"><div class="foot-info">The University of Lahore — Campus Event Management System &bull; Active DB: AWS RDS MySQL (Live Cloud) 🟢 &bull; Team: Umme Habiba, Zoha Khalid, Laiba Aamir</div></div></main>';
 
     Array.prototype.forEach.call(document.querySelectorAll('[data-go]'), function (b) {
       b.addEventListener('click', function () { go(b.getAttribute('data-go')); });
