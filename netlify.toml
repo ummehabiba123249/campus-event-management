@@ -1,12 +1,13 @@
 # Netlify Configuration for Campus Event Management System with AWS RDS MySQL
 
 [build]
+  command = "npm install"
   publish = "frontend"
   functions = "netlify/functions"
 
 [functions]
   node_bundler = "esbuild"
-  included_files = ["backend/database/global-bundle.pem", "backend/database/schema.mysql.sql"]
+  external_node_modules = ["sqlite3"]
 
 [[redirects]]
   from = "/api/*"
